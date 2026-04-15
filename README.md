@@ -136,6 +136,36 @@ alter-ego/
 - **ESLint** - 代码 linting
 - **Prettier** - 代码格式化
 
+## 🆓 零成本 MVP 实现
+
+本项目采用**完全免费**的技术栈，实现零成本 MVP 开发：
+
+| 项目 | 传统方案 | 零成本方案 |
+|------|----------|------------|
+| 语音识别 | Azure/Google ($0.006/分钟) | **Web Speech API** |
+| 语音合成 | ElevenLabs ($5/月) | **Web Speech API** |
+| AI 对话 | GPT-4 ($0.03/1K tokens) | **Google Gemini API** |
+| 后端服务 | AWS/阿里云 ($50+/月) | **无后端设计** |
+| 部署托管 | VPS ($5-20/月) | **Vercel/GitHub Pages** |
+
+📖 详细实现指南：[零成本 MVP 实现指南](./docs/06-zero-cost-mvp-guide.md)
+
+### API 配置
+
+1. 获取 Google Gemini API Key（免费 1500 次/天）
+   - 访问：https://aistudio.google.com/
+   - 创建 API Key
+
+2. 复制环境变量文件
+   ```bash
+   cp .env.example .env
+   ```
+
+3. 在 `.env` 中添加你的 API Key
+   ```
+   VITE_GEMINI_API_KEY=your_api_key_here
+   ```
+
 ## 📝 开发指南
 
 ### 目录规范
