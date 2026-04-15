@@ -179,8 +179,7 @@ git commit -m "fix: 修复语音识别在 Safari 上的兼容性问题"
 
 ## 📞 联系方式
 
-- 项目问题：[GitHub Issues](https://github.com/your-username/alter-ego/issues)
-- 邮箱：your-email@example.com
+- 项目问题：[GitHub Issues](https://github.com/Starry-yan/AlterEgo-EnglishAPP/issues)
 
 ## 🙏 致谢
 
