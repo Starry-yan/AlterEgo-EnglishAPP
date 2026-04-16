@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alter Ego - AI 多元场景口语实战</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="logo">🎭</span>
+                <span class="brand-name">Alter Ego</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">首页</a>
+                <a href="#scenes" class="nav-link">场景</a>
+                <a href="#profile" class="nav-link">我的</a>
+            </div>
+        </nav>
+
+        <!-- 首页 -->
+        <section id="home" class="page active">
+            <div class="hero-section">
+                <h1 class="hero-title">重塑你的英语第二自我</h1>
+                <p class="hero-subtitle">在安全的虚拟世界中，自信地开口说英语</p>
+                <button class="btn-primary btn-large" onclick="navigateTo('scenes')">
+                    开始练习
+                    <span class="btn-icon">→</span>
+                </button>
+            </div>
+            
+            <div class="features-section">
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3>理想自我投射</h3>
+                    <p>创建你的虚拟形象，在安全的环境中练习</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>多元场景实战</h3>
+                    <p>咖啡厅、机场、会议室...真实场景模拟</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>思维矫正</h3>
+                    <p>切断翻译思维，建立英语直觉反应</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 场景选择页 -->
+        <section id="scenes" class="page">
+            <div class="page-header">
+                <h2>选择练习场景</h2>
+                <p>选择一个场景开始你的口语练习</p>
+            </div>
+            <div class="scenes-grid">
+                <div class="scene-card locked" data-scene="cafe">
+                    <div class="scene-icon">☕</div>
+                    <h3>咖啡厅</h3>
+                    <p class="scene-desc">点单、闲聊的日常场景</p>
+                    <div class="scene-difficulty">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">☆</span>
+                        <span class="star">☆</span>
+                        <span class="star">☆</span>
+                    </div>
+                    <div class="scene-status">
+                        <span class="lock-icon">🔒</span>
+                        <span>完成新手教程解锁</span>
+                    </div>
+                </div>
+                <div class="scene-card locked" data-scene="airport">
+                    <div class="scene-icon">✈️</div>
+                    <h3>机场</h3>
+                    <p class="scene-desc">值机、过海关的旅行场景</p>
+                    <div class="scene-difficulty">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">☆</span>
+                        <span class="star">☆</span>
+                    </div>
+                    <div class="scene-status">
+                        <span class="lock-icon">🔒</span>
+                        <span>完成咖啡厅解锁</span>
+                    </div>
+                </div>
+                <div class="scene-card locked" data-scene="meeting">
+                    <div class="scene-icon">💼</div>
+                    <h3>会议室</h3>
+                    <p class="scene-desc">商务会议、工作汇报</p>
+                    <div class="scene-difficulty">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">☆</span>
+                    </div>
+                    <div class="scene-status">
+                        <span class="lock-icon">🔒</span>
+                        <span>完成机场解锁</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="navigateTo('home')">
+                ← 返回首页
+            </button>
+        </section>
+
+        <!-- 练习页面 -->
+        <section id="practice" class="page">
+            <div class="practice-header">
+                <button class="btn-back" onclick="navigateTo('scenes')">
+                    ← 返回
+                </button>
+                <h2 id="scene-title">场景名称</h2>
+                <div class="practice-timer">00:00</div>
+            </div>
+
+            <div class="ai-partner-section">
+                <div class="ai-avatar" id="ai-avatar">
+                    <img src="" alt="AI Partner" id="ai-avatar-img">
+                </div>
+                <div class="ai-status" id="ai-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">准备就绪</span>
+                </div>
+            </div>
+
+            <div class="conversation-area" id="conversation">
+                <!-- 消息将动态添加到这里 -->
+            </div>
+
+            <div class="hint-panel" id="hint-panel">
+                <button class="btn-hint" onclick="showHint()">
+                    <span class="hint-icon">💡</span>
+                    <span>需要提示？</span>
+                </button>
+                <div class="hint-options" id="hint-options" style="display: none;">
+                    <button class="hint-level-1" onclick="getHint(1)">
+                        🎤 语音提示
+                    </button>
+                    <button class="hint-level-2" onclick="getHint(2)">
+                        🔤 关键词提示
+                    </button>
+                    <button class="hint-level-3" onclick="getHint(3)">
+                        📝 中文翻译
+                    </button>
+                </div>
+            </div>
+
+            <div class="recording-section">
+                <button class="btn-record" id="record-btn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording()" ontouchend="stopRecording()">
+                    <span class="record-icon">🎤</span>
+                    <span class="record-text">按住说话</span>
+                </button>
+                <div class="recording-indicator" id="recording-indicator" style="display: none;">
+                    <div class="wave-container">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
+                    <span>正在录音...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 我的页面 -->
+        <section id="profile" class="page">
+            <div class="profile-header">
+                <div class="user-avatar" id="user-avatar">
+                    <img src="" alt="Your Avatar" id="user-avatar-img">
+                </div>
+                <h2>我的 Alter Ego</h2>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-minutes">0</div>
+                    <div class="stat-label">练习时长 (分钟)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-sessions">0</div>
+                    <div class="stat-label">练习次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="streak-days">0</div>
+                    <div class="stat-label">连续打卡</div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h3>学习进度</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="overall-progress">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <button class="btn-secondary" onclick="editAvatar()">
+                ✏️ 编辑形象
+            </button>
+            <button class="btn-secondary" onclick="navigateTo('home')">
+                返回首页
+            </button>
+        </section>
+
+        <!-- 形象编辑器 -->
+        <section id="avatar-editor" class="page">
+            <div class="page-header">
+                <h2>创建你的形象</h2>
+            </div>
+
+            <div class="avatar-preview">
+                <img src="" alt="Avatar Preview" id="avatar-preview-img">
+            </div>
+
+            <div class="avatar-styles">
+                <h3>选择风格</h3>
+                <div class="style-options">
+                    <button class="style-btn active" data-style="adventurer">2D 冒险风</button>
+                    <button class="style-btn" data-style="avataaars">3D 卡通风</button>
+                </div>
+            </div>
+
+            <div class="avatar-customize">
+                <h3>自定义颜色</h3>
+                <div class="color-options">
+                    <button class="color-btn" data-color="0" style="background: #FF6B6B;"></button>
+                    <button class="color-btn" data-color="1" style="background: #4ECDC4;"></button>
+                    <button class="color-btn" data-color="2" style="background: #FFE66D;"></button>
+                    <button class="color-btn" data-color="3" style="background: #6B5B95;"></button>
+                    <button class="color-btn" data-color="4" style="background: #95E1D3;"></button>
+                    <button class="color-btn" data-color="5" style="background: #F38181;"></button>
+                </div>
+            </div>
+
+            <div class="avatar-presets">
+                <h3>快速选择</h3>
+                <div class="preset-grid" id="preset-grid">
+                    <!-- 预设形象将动态生成 -->
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="saveAvatar()">
+                保存形象
+            </button>
+            <button class="btn-secondary" onclick="navigateTo('profile')">
+                取消
+            </button>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

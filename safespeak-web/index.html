@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Speak - English Life Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Page 1: Avatar Creation (Character Creator) -->
+        <section id="avatar-creation" class="page active">
+            <div class="game-header">
+                <div class="plumbob-container">
+                    <div class="plumbob"></div>
+                </div>
+                <h1 class="page-title">Create Your Character</h1>
+            </div>
+            
+            <div class="page-content">
+                <p class="page-subtitle">Design the version of you that speaks English with confidence</p>
+                
+                <div class="character-preview">
+                    <div class="character-stage">
+                        <div class="character-bg"></div>
+                        <div class="character-display" id="character-display">
+                            <div class="character-avatar" id="character-avatar">
+                                <div class="avatar-face" id="avatar-face">😊</div>
+                                <div class="character-name-tag">Your English Self</div>
+                            </div>
+                            <div class="plumbob-indicator good"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-creation-form">
+                    <div class="form-section">
+                        <h3>🎭 Choose Your Persona</h3>
+                        <div class="persona-cards">
+                            <div class="persona-card selected" data-persona="confident">
+                                <div class="persona-icon">💼</div>
+                                <div class="persona-name">Confident Pro</div>
+                                <div class="persona-desc">Clear & Assertive</div>
+                            </div>
+                            <div class="persona-card" data-persona="friendly">
+                                <div class="persona-icon">☕</div>
+                                <div class="persona-name">Friendly Chat</div>
+                                <div class="persona-desc">Warm & Patient</div>
+                            </div>
+                            <div class="persona-card" data-persona="energetic">
+                                <div class="persona-icon">⚡</div>
+                                <div class="persona-name">Bold Learner</div>
+                                <div class="persona-desc">Enthusiastic & Curious</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>🎙️ Voice Style</h3>
+                        <div class="voice-options">
+                            <label class="voice-option">
+                                <input type="radio" name="voice" value="male-deep" checked>
+                                <span class="voice-icon">🎙️</span>
+                                <span class="voice-label">Deep & Confident</span>
+                            </label>
+                            <label class="voice-option">
+                                <input type="radio" name="voice" value="female-warm">
+                                <span class="voice-icon">🎙️</span>
+                                <span class="voice-label">Warm & Gentle</span>
+                            </label>
+                            <label class="voice-option">
+                                <input type="radio" name="voice" value="young-energetic">
+                                <span class="voice-icon">🎙️</span>
+                                <span class="voice-label">Young & Energetic</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>📊 Personality Traits</h3>
+                        <div class="trait-sliders">
+                            <div class="slider-group">
+                                <label>Confidence</label>
+                                <input type="range" id="confidence-slider" min="1" max="5" value="3">
+                                <div class="slider-labels">
+                                    <span>🤐 Reserved</span>
+                                    <span>😎 Confident</span>
+                                </div>
+                            </div>
+                            <div class="slider-group">
+                                <label>Speaking Speed</label>
+                                <input type="range" id="speed-slider" min="1" max="5" value="3">
+                                <div class="slider-labels">
+                                    <span>🐢 Slow</span>
+                                    <span>🐇 Fast</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-primary btn-large" id="start-journey-btn">
+                    ▶️ Start English Life
+                </button>
+            </div>
+        </section>
+        
+        <!-- Page 2: World Map (Scene Selection) -->
+        <section id="scene-selection" class="page">
+            <div class="game-header">
+                <div class="header-left">
+                    <button class="btn-icon" id="back-home-btn">←</button>
+                    <span class="character-mini-avatar" id="mini-avatar">😊</span>
+                </div>
+                <h1 class="page-title">English World</h1>
+                <div class="header-right">
+                    <span class="currency">💰 <span id="currency-amount">150</span></span>
+                </div>
+            </div>
+            
+            <div class="page-content">
+                <p class="page-subtitle">Explore different scenarios to practice your English</p>
+                
+                <!-- World Map View -->
+                <div class="world-map">
+                    <div class="map-neighborhood" data-neighborhood="downtown">
+                        <h3 class="neighborhood-name">🏙️ Downtown District</h3>
+                        
+                        <div class="scene-grid">
+                            <div class="scene-card scene-cafe" data-scene="cafe" data-unlocked="true">
+                                <div class="scene-building">
+                                    <div class="building-icon">☕</div>
+                                    <div class="building-roof"></div>
+                                </div>
+                                <div class="scene-info-card">
+                                    <h4>Cafe Lounge</h4>
+                                    <div class="scene-tags">
+                                        <span class="tag difficulty">★★☆☆☆</span>
+                                        <span class="tag progress">45%</span>
+                                    </div>
+                                    <div class="scene-task">
+                                        <span class="task-icon">📋</span>
+                                        <span class="task-text">Order a drink</span>
+                                    </div>
+                                </div>
+                                <div class="scene-status unlocked">
+                                    <span class="status-icon">🔓</span>
+                                </div>
+                            </div>
+                            
+                            <div class="scene-card scene-office" data-scene="office" data-unlocked="true">
+                                <div class="scene-building">
+                                    <div class="building-icon">🏢</div>
+                                    <div class="building-roof"></div>
+                                </div>
+                                <div class="scene-info-card">
+                                    <h4>Office Meeting</h4>
+                                    <div class="scene-tags">
+                                        <span class="tag difficulty">★★★☆☆</span>
+                                        <span class="tag progress">30%</span>
+                                    </div>
+                                    <div class="scene-task">
+                                        <span class="task-icon">📊</span>
+                                        <span class="task-text">Share project update</span>
+                                    </div>
+                                </div>
+                                <div class="scene-status unlocked">
+                                    <span class="status-icon">🔓</span>
+                                </div>
+                            </div>
+                            
+                            <div class="scene-card scene-airport" data-scene="airport" data-unlocked="true">
+                                <div class="scene-building">
+                                    <div class="building-icon">✈️</div>
+                                    <div class="building-roof"></div>
+                                </div>
+                                <div class="scene-info-card">
+                                    <h4>Airport</h4>
+                                    <div class="scene-tags">
+                                        <span class="tag difficulty">★★★☆☆</span>
+                                        <span class="tag progress">0%</span>
+                                    </div>
+                                    <div class="scene-task">
+                                        <span class="task-icon">🧳</span>
+                                        <span class="task-text">Check in luggage</span>
+                                    </div>
+                                </div>
+                                <div class="scene-status unlocked">
+                                    <span class="status-icon">🔓</span>
+                                </div>
+                            </div>
+                            
+                            <div class="scene-card scene-hotel" data-scene="hotel" data-unlocked="false">
+                                <div class="scene-building locked">
+                                    <div class="building-icon">🏨</div>
+                                    <div class="building-roof"></div>
+                                </div>
+                                <div class="scene-info-card locked">
+                                    <h4>Hotel</h4>
+                                    <div class="scene-tags">
+                                        <span class="tag difficulty">★★★★☆</span>
+                                        <span class="tag locked">🔒</span>
+                                    </div>
+                                    <div class="scene-task locked">
+                                        <span class="task-icon">🔑</span>
+                                        <span class="task-text">Complete 2 scenes to unlock</span>
+                                    </div>
+                                </div>
+                                <div class="scene-status locked">
+                                    <span class="status-icon">🔒</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Page 3: Scene Training (Game View) -->
+        <section id="scene-training" class="page">
+            <!-- Game HUD -->
+            <div class="game-hud">
+                <div class="hud-left">
+                    <button class="btn-icon" id="back-scenes-btn">⬅️</button>
+                    <div class="character-status-bar">
+                        <div class="mini-avatar" id="hud-avatar">😊</div>
+                        <div class="needs-bar">
+                            <div class="need-bar social" title="Social">
+                                <span class="need-icon">💬</span>
+                                <div class="need-fill" style="width: 75%"></div>
+                            </div>
+                            <div class="need-bar energy" title="Energy">
+                                <span class="need-icon">⚡</span>
+                                <div class="need-fill" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hud-center">
+                    <div class="current-scene-badge">
+                        <span class="scene-icon">☕</span>
+                        <span class="scene-name" id="current-scene-name">Cafe</span>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="task-tracker">
+                        <span class="task-tracker-icon">📋</span>
+                        <span class="task-tracker-text" id="current-task">Order a drink</span>
+                    </div>
+                    <div class="currency-display">
+                        <span>💰</span>
+                        <span id="scene-currency">+0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3D Scene View -->
+            <div class="game-scene" id="game-scene">
+                <div class="scene-background" id="scene-background">
+                    <!-- Dynamic scene background -->
+                </div>
+                
+                <!-- Scene Objects (Interactive) -->
+                <div class="scene-interactables" id="scene-interactables">
+                    <div class="interactable" data-object="menu" data-action="look">
+                        <div class="interactable-icon">📋</div>
+                        <div class="interactable-label">Menu</div>
+                        <div class="interaction-ring"></div>
+                    </div>
+                    <div class="interactable" data-object="coffee" data-action="use">
+                        <div class="interactable-icon">☕</div>
+                        <div class="interactable-label">Coffee</div>
+                        <div class="interaction-ring"></div>
+                    </div>
+                    <div class="interactable" data-object="counter" data-action="talk">
+                        <div class="interactable-icon">🏪</div>
+                        <div class="interactable-label">Counter</div>
+                        <div class="interaction-ring"></div>
+                    </div>
+                </div>
+                
+                <!-- NPC Character -->
+                <div class="npc-character" id="npc-character">
+                    <div class="npc-avatar-display" id="npc-avatar">
+                        <div class="npc-face">👨‍💼</div>
+                        <div class="npc-name-tag">Barista Alex</div>
+                    </div>
+                    <div class="npc-plumbob good"></div>
+                    <div class="npc-speech-bubble" id="speech-bubble">
+                        <span id="ai-text">Hello! Welcome to our cafe. What can I get for you today?</span>
+                    </div>
+                    <div class="npc-emotion" id="npc-emotion">😊</div>
+                </div>
+                
+                <!-- Thought Bubble (for hints) -->
+                <div class="thought-bubble" id="thought-bubble">
+                    <div class="thought-content" id="thought-content">
+                        <span class="thought-icon">💡</span>
+                        <span class="thought-text">Try saying: "I'd like a coffee please"</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <div class="control-left">
+                    <button class="game-btn" id="hint-btn" title="Get Hint">
+                        <span class="btn-icon-text">💡</span>
+                    </button>
+                    <button class="game-btn" id="inventory-btn" title="Inventory">
+                        <span class="btn-icon-text">🎒</span>
+                    </button>
+                </div>
+                
+                <div class="control-center">
+                    <button class="record-btn" id="record-btn">
+                        <div class="record-ring"></div>
+                        <span class="record-icon">🎤</span>
+                    </button>
+                    <div class="recording-animation" id="recording-animation">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+                
+                <div class="control-right">
+                    <button class="game-btn" id="chat-history-btn" title="Chat History">
+                        <span class="btn-icon-text">📜</span>
+                    </button>
+                    <button class="game-btn" id="pause-btn" title="Pause">
+                        <span class="btn-icon-text">⏸️</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat History Panel (Overlay) -->
+            <div class="chat-panel" id="chat-panel">
+                <div class="chat-header">
+                    <h4>Conversation</h4>
+                    <button class="close-btn" id="close-chat">✕</button>
+                </div>
+                <div class="chat-content" id="chat-content">
+                    <!-- Messages will be added here -->
+                </div>
+            </div>
+            
+            <!-- Hint Panel -->
+            <div class="hint-panel" id="hint-panel">
+                <span class="hint-icon">💡</span>
+                <span class="hint-text">Tap for hints if stuck!</span>
+            </div>
+        </section>
+        
+        <!-- Page 4: Life Stats (Progress Report) -->
+        <section id="progress-report" class="page">
+            <div class="game-header">
+                <div class="header-left">
+                    <button class="btn-icon" id="back-home-btn-2">←</button>
+                    <span class="character-mini-avatar" id="mini-avatar-2">😊</span>
+                </div>
+                <h1 class="page-title">Life Stats</h1>
+                <div class="header-right">
+                    <span class="level-badge">Lvl <span id="user-level">5</span></span>
+                </div>
+            </div>
+            
+            <div class="page-content">
+                <!-- Character Portrait -->
+                <div class="character-stats-header">
+                    <div class="character-portrait-large">
+                        <div class="portrait-avatar" id="portrait-avatar">
+                            <div class="avatar-face large">😊</div>
+                        </div>
+                        <div class="plumbob-indicator excellent"></div>
+                    </div>
+                    <div class="character-info">
+                        <h3 id="character-name">Your English Self</h3>
+                        <p class="character-title">Confident Communicator</p>
+                        <div class="exp-bar">
+                            <div class="exp-fill" style="width: 65%"></div>
+                            <span class="exp-text">650 / 1000 XP</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-value" id="total-minutes">25</div>
+                        <div class="stat-label">Minutes Spoken</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🗣️</div>
+                        <div class="stat-value" id="total-sentences">156</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value" id="streak-days">5</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="total-currency">1250</div>
+                        <div class="stat-label">Earned</div>
+                    </div>
+                </div>
+                
+                <!-- Fluency Graph -->
+                <div class="stats-section">
+                    <h3>📈 Fluency Progress</h3>
+                    <div class="fluency-graph">
+                        <div class="graph-bars">
+                            <div class="graph-bar" style="height: 50%">
+                                <span class="bar-value">5.0</span>
+                            </div>
+                            <div class="graph-bar" style="height: 58%">
+                                <span class="bar-value">5.8</span>
+                            </div>
+                            <div class="graph-bar" style="height: 65%">
+                                <span class="bar-value">6.5</span>
+                            </div>
+                            <div class="graph-bar" style="height: 72%">
+                                <span class="bar-value">7.2</span>
+                            </div>
+                            <div class="graph-bar" style="height: 80%">
+                                <span class="bar-value">8.0</span>
+                            </div>
+                            <div class="graph-bar" style="height: 85%">
+                                <span class="bar-value">8.5</span>
+                            </div>
+                        </div>
+                        <div class="graph-labels">
+                            <span>W1</span>
+                            <span>W2</span>
+                            <span>W3</span>
+                            <span>W4</span>
+                            <span>W5</span>
+                            <span>Now</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thinking Mode Stats -->
+                <div class="stats-section">
+                    <h3>🧠 English Thinking Mode</h3>
+                    <div class="thinking-mode-stats">
+                        <div class="thinking-mode-item">
+                            <div class="thinking-mode-icon">🚫</div>
+                            <div class="thinking-mode-info">
+                                <span class="thinking-mode-value">12</span>
+                                <span class="thinking-mode-label">Translation instances this week</span>
+                            </div>
+                            <div class="thinking-mode-improvement">↓ 40%</div>
+                        </div>
+                        <div class="thinking-mode-item">
+                            <div class="thinking-mode-icon">⚡</div>
+                            <div class="thinking-mode-info">
+                                <span class="thinking-mode-value">85%</span>
+                                <span class="thinking-mode-label">Direct English thinking rate</span>
+                            </div>
+                            <div class="thinking-mode-improvement positive">↑ 15%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scene Achievements -->
+                <div class="stats-section">
+                    <h3>🏆 Scene Achievements</h3>
+                    <div class="achievements-list">
+                        <div class="achievement-item unlocked">
+                            <div class="achievement-icon">☕</div>
+                            <div class="achievement-info">
+                                <span class="achievement-name">Coffee Master</span>
+                                <span class="achievement-desc">Complete Cafe scenario</span>
+                            </div>
+                            <div class="achievement-status">✓</div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">🏢</div>
+                            <div class="achievement-info">
+                                <span class="achievement-name">Business Pro</span>
+                                <span class="achievement-desc">Complete Office scenario</span>
+                            </div>
+                            <div class="achievement-status">🔒</div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">✈️</div>
+                            <div class="achievement-info">
+                                <span class="achievement-name">Travel Ready</span>
+                                <span class="achievement-desc">Complete Airport scenario</span>
+                            </div>
+                            <div class="achievement-status">🔒</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-primary btn-large" id="continue-practice-btn">
+                    ▶️ Continue Playing
+                </button>
+            </div>
+        </section>
+        
+        <!-- Navigation Bar -->
+        <nav class="nav-bar" id="nav-bar">
+            <button class="nav-item active" data-page="avatar-creation">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Character</span>
+            </button>
+            <button class="nav-item" data-page="scene-selection">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">World</span>
+            </button>
+            <button class="nav-item" data-page="progress-report">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Stats</span>
+            </button>
+        </nav>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- Achievement Unlocked Popup -->
+    <div class="achievement-popup" id="achievement-popup">
+        <div class="achievement-popup-content">
+            <div class="achievement-popup-icon">🏆</div>
+            <h3>Achievement Unlocked!</h3>
+            <p id="achievement-popup-text">Coffee Master</p>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
