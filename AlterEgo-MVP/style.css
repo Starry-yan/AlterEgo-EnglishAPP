@@ -953,3 +953,458 @@ body {
         grid-template-columns: repeat(6, 1fr);
     }
 }
+
+/* ========================================
+   游戏化元素样式
+   ======================================== */
+
+/* 用户状态栏 */
+.user-status-bar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+    z-index: 999;
+}
+
+.user-level {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.level-badge {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-purple) 100%);
+    color: var(--color-white);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.level-name {
+    font-size: 0.85rem;
+    color: var(--color-gray-600);
+    font-weight: 500;
+}
+
+.user-xp-bar {
+    flex: 1;
+    max-width: 300px;
+    margin: 0 var(--spacing-md);
+    position: relative;
+}
+
+.xp-fill {
+    height: 8px;
+    background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.xp-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.xp-text {
+    position: absolute;
+    right: 0;
+    top: -20px;
+    font-size: 0.75rem;
+    color: var(--color-gray-500);
+    font-weight: 600;
+}
+
+.user-streak {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    color: var(--color-white);
+    font-weight: 700;
+}
+
+.streak-icon {
+    font-size: 1.1rem;
+    animation: flame 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flame {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+.streak-count {
+    font-size: 0.9rem;
+}
+
+/* 首页光晕效果 */
+.hero-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glow 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-white) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.quick-start-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.continue-practice {
+    font-size: 0.9rem;
+    color: var(--color-white);
+    opacity: 0.9;
+}
+
+.continue-practice span {
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+/* 每日任务 */
+.daily-quests-section {
+    width: 100%;
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header h3 {
+    font-size: 1.125rem;
+    color: var(--color-gray-800);
+    font-weight: 700;
+}
+
+.quest-timer {
+    font-size: 0.85rem;
+    color: var(--color-gray-500);
+    font-family: 'Courier New', monospace;
+}
+
+.view-all {
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.view-all:hover {
+    text-decoration: underline;
+}
+
+.daily-quests {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.quest-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-base);
+}
+
+.quest-item:hover {
+    background: var(--color-gray-100);
+    transform: translateX(4px);
+}
+
+.quest-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.quest-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.quest-title {
+    font-weight: 600;
+    color: var(--color-gray-800);
+    font-size: 0.95rem;
+}
+
+.quest-desc {
+    font-size: 0.8rem;
+    color: var(--color-gray-500);
+}
+
+.quest-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+}
+
+.quest-bar {
+    width: 100px;
+    height: 6px;
+    background: var(--color-gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.quest-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.quest-count {
+    font-size: 0.75rem;
+    color: var(--color-gray-500);
+    font-weight: 600;
+}
+
+.quest-reward {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.reward-icon {
+    font-size: 1rem;
+}
+
+.reward-xp {
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.daily-quest-reward {
+    margin-top: var(--spacing-md);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reward-box {
+    background: linear-gradient(135deg, var(--color-accent) 0%, #FFD93D 100%);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    font-weight: 600;
+    color: var(--color-gray-800);
+    box-shadow: var(--shadow-lg);
+    animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* 成就徽章 */
+.achievements-section {
+    width: 100%;
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+.achievement-card.unlocked {
+    opacity: 1;
+    filter: grayscale(0%);
+    border: 2px solid var(--color-accent);
+    box-shadow: var(--shadow-md);
+}
+
+.achievement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.achievement-name {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-gray-800);
+    margin-bottom: 4px;
+}
+
+.achievement-desc {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-gray-500);
+}
+
+/* 快速入口 */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.action-icon {
+    font-size: 1.75rem;
+}
+
+.action-btn span:last-child {
+    font-size: 0.85rem;
+    color: var(--color-gray-600);
+    font-weight: 500;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .user-status-bar {
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
+    }
+    
+    .user-xp-bar {
+        order: 3;
+        width: 100%;
+        max-width: none;
+        margin: var(--spacing-xs) 0;
+    }
+    
+    .xp-text {
+        top: -18px;
+        font-size: 0.7rem;
+    }
+    
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .quest-item {
+        flex-wrap: wrap;
+    }
+    
+    .quest-progress {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: var(--spacing-sm);
+    }
+    
+    .quest-bar {
+        width: 60%;
+    }
+}

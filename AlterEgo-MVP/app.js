@@ -1,6 +1,6 @@
 /**
  * Alter Ego - 主应用逻辑
- * Commit 1: 基础应用初始化
+ * Commit 4: 首页游戏化 redesign - 添加 XP 系统、成就、每日任务
  */
 
 // ========================================
@@ -24,9 +24,116 @@ const AppState = {
         totalMinutes: 0,
         totalSessions: 0,
         streakDays: 0,
-        lastPracticeDate: null
+        lastPracticeDate: null,
+        // 游戏化数据
+        level: 1,
+        currentXP: 0,
+        totalXP: 0,
+        dailyQuests: [],
+        completedQuests: [],
+        achievements: []
     }
 };
+
+// XP 等级表
+const XP_LEVELS = {
+    1: { threshold: 0, title: '新手' },
+    2: { threshold: 100, title: '初学者' },
+    3: { threshold: 250, title: '进阶者' },
+    4: { threshold: 500, title: '熟练工' },
+    5: { threshold: 850, title: '高手' },
+    6: { threshold: 1300, title: '专家' },
+    7: { threshold: 1850, title: '大师' },
+    8: { threshold: 2500, title: '宗师' },
+    9: { threshold: 3250, title: '传奇' },
+    10: { threshold: 4100, title: '传奇+' }
+};
+
+// 每日任务配置
+const DAILY_QUESTS_CONFIG = [
+    {
+        id: 'practice_10min',
+        icon: '⏱️',
+        title: '练习 10 分钟',
+        desc: '完成一次 10 分钟的口语练习',
+        type: 'time',
+        target: 10,
+        rewardXP: 50
+    },
+    {
+        id: 'complete_scene',
+        icon: '🎯',
+        title: '完成一个场景',
+        desc: '完成任意场景的练习',
+        type: 'scene',
+        target: 1,
+        rewardXP: 30
+    },
+    {
+        id: 'speak_5times',
+        icon: '🗣️',
+        title: '开口 5 次',
+        desc: '在对话中发言 5 次以上',
+        type: 'speaks',
+        target: 5,
+        rewardXP: 25
+    },
+    {
+        id: 'no_hint',
+        icon: '💪',
+        title: '无提示挑战',
+        desc: '完成一次不使用提示的对话',
+        type: 'noHint',
+        target: 1,
+        rewardXP: 40
+    }
+];
+
+// 成就配置
+const ACHIEVEMENTS_CONFIG = [
+    {
+        id: 'first_blood',
+        icon: '🎉',
+        name: '初次开口',
+        desc: '完成第一次对话',
+        condition: (stats) => stats.totalSessions >= 1
+    },
+    {
+        id: 'streak_3',
+        icon: '🔥',
+        name: '三日连击',
+        desc: '连续练习 3 天',
+        condition: (stats) => stats.streakDays >= 3
+    },
+    {
+        id: 'practice_1hour',
+        icon: '⏰',
+        name: '一小时达人',
+        desc: '累计练习 1 小时',
+        condition: (stats) => stats.totalMinutes >= 60
+    },
+    {
+        id: 'level_5',
+        icon: '⭐',
+        name: '五级高手',
+        desc: '达到 5 级',
+        condition: (stats) => stats.level >= 5
+    },
+    {
+        id: 'scenes_3',
+        icon: '🌍',
+        name: '场景探索者',
+        desc: '体验 3 个不同场景',
+        condition: (stats) => stats.totalSessions >= 3
+    },
+    {
+        id: 'perfect_10',
+        icon: '🏆',
+        name: '完美十次',
+        desc: '完成 10 次对话',
+        condition: (stats) => stats.totalSessions >= 10
+    }
+];
 
 // ========================================
 // 初始化应用
@@ -50,6 +157,16 @@ function initializeApp() {
     
     // 设置默认 AI 头像
     setDefaultAvatar();
+    
+    // 初始化游戏化系统
+    initializeDailyQuests();
+    updateUserStatus();
+    updateQuestDisplay();
+    updateAchievementDisplay();
+    checkAchievements();
+    
+    // 启动每日任务计时器
+    startQuestTimer();
 }
 
 // ========================================
@@ -484,26 +601,6 @@ function stopSessionTimer() {
     }
 }
 
-function updateSessionStats() {
-    if (AppState.sessionStartTime) {
-        const elapsed = Math.floor((Date.now() - AppState.sessionStartTime) / 60000);
-        if (elapsed > 0) {
-            AppState.stats.totalMinutes += elapsed;
-            AppState.stats.totalSessions += 1;
-            
-            // 更新打卡
-            const today = new Date().toDateString();
-            if (AppState.stats.lastPracticeDate !== today) {
-                AppState.stats.streakDays += 1;
-                AppState.stats.lastPracticeDate = today;
-            }
-            
-            saveUserData();
-            updateStatsDisplay();
-        }
-    }
-}
-
 // ========================================
 // 统计显示
 // ========================================
@@ -526,11 +623,347 @@ function updateStatsDisplay() {
 }
 
 // ========================================
-// 通知系统
+// 游戏化系统
 // ========================================
+
+// 初始化每日任务
+function initializeDailyQuests() {
+    const today = new Date().toDateString();
+    const lastQuestDate = AppState.stats.lastQuestDate;
+    
+    // 如果是新的一天，重置每日任务
+    if (lastQuestDate !== today) {
+        AppState.stats.dailyQuests = DAILY_QUESTS_CONFIG.map(quest => ({
+            ...quest,
+            progress: 0,
+            completed: false
+        }));
+        AppState.stats.lastQuestDate = today;
+        AppState.stats.completedQuests = [];
+        saveUserData();
+    }
+    
+    // 检查是否有未领取的奖励
+    checkCompletedQuests();
+}
+
+// 检查并领取已完成的每日任务
+function checkCompletedQuests() {
+    let hasNewCompletion = false;
+    
+    AppState.stats.dailyQuests.forEach(quest => {
+        if (!quest.completed && quest.progress >= quest.target) {
+            quest.completed = true;
+            hasNewCompletion = true;
+            
+            // 领取奖励
+            addXP(quest.rewardXP, `完成每日任务：${quest.title}`);
+            
+            // 记录已完成的任务
+            if (!AppState.stats.completedQuests.includes(quest.id)) {
+                AppState.stats.completedQuests.push(quest.id);
+            }
+        }
+    });
+    
+    if (hasNewCompletion) {
+        saveUserData();
+        updateQuestDisplay();
+    }
+}
+
+// 更新每日任务进度
+function updateQuestProgress(questType, amount = 1) {
+    const quest = AppState.stats.dailyQuests.find(q => q.type === questType);
+    if (quest && !quest.completed) {
+        quest.progress = Math.min(quest.progress + amount, quest.target);
+        
+        if (quest.progress >= quest.target) {
+            quest.completed = true;
+            addXP(quest.rewardXP, `完成每日任务：${quest.title}`);
+            
+            if (!AppState.stats.completedQuests.includes(quest.id)) {
+                AppState.stats.completedQuests.push(quest.id);
+            }
+        }
+        
+        saveUserData();
+        updateQuestDisplay();
+    }
+}
+
+// 添加 XP 经验值
+function addXP(amount, source = '') {
+    const oldLevel = AppState.stats.level;
+    AppState.stats.currentXP += amount;
+    AppState.stats.totalXP += amount;
+    
+    // 检查是否升级
+    const nextLevel = oldLevel + 1;
+    if (XP_LEVELS[nextLevel] && AppState.stats.currentXP >= XP_LEVELS[nextLevel].threshold) {
+        AppState.stats.level = nextLevel;
+        showLevelUpNotification(oldLevel, nextLevel);
+    }
+    
+    saveUserData();
+    updateUserStatus();
+}
+
+// 显示升级通知
+function showLevelUpNotification(oldLevel, newLevel) {
+    const levelInfo = XP_LEVELS[newLevel];
+    const message = `🎉 恭喜升级！\n从 Lv.${oldLevel} 升级到 Lv.${newLevel} - ${levelInfo.title}！`;
+    
+    // 创建升级通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #FF6B6B 0%, #6B5B95 100%);
+        color: white;
+        padding: 20px 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 10000;
+        text-align: center;
+        animation: slideDown 0.5s ease, bounce 0.5s ease 0.5s;
+    `;
+    notification.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 10px;">🎉</div>
+        <div style="font-size: 1.25rem; font-weight: 700;">Level Up!</div>
+        <div style="font-size: 0.9rem; margin-top: 5px;">Lv.${oldLevel} → Lv.${newLevel}</div>
+        <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 5px;">${levelInfo.title}</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideUp 0.5s ease';
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// 检查成就
+function checkAchievements() {
+    const newAchievements = [];
+    
+    ACHIEVEMENTS_CONFIG.forEach(achievement => {
+        if (!AppState.stats.achievements.includes(achievement.id)) {
+            if (achievement.condition(AppState.stats)) {
+                AppState.stats.achievements.push(achievement.id);
+                newAchievements.push(achievement);
+                addXP(20, `解锁成就：${achievement.name}`);
+            }
+        }
+    });
+    
+    if (newAchievements.length > 0) {
+        saveUserData();
+        showAchievementNotifications(newAchievements);
+    }
+}
+
+// 显示成就通知
+function showAchievementNotifications(achievements) {
+    achievements.forEach((achievement, index) => {
+        setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: white;
+                padding: 16px 20px;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                animation: slideInRight 0.5s ease;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <div style="font-size: 2rem;">${achievement.icon}</div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #6B7280;">Achievement Unlocked</div>
+                    <div style="font-size: 0.9rem; font-weight: 600; color: #1F2937;">${achievement.name}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }, index * 500);
+    });
+}
+
+// 更新用户状态栏显示
+function updateUserStatus() {
+    const levelBadge = document.getElementById('user-level-badge');
+    const levelName = document.getElementById('user-level-name');
+    const xpFill = document.getElementById('xp-fill');
+    const xpText = document.getElementById('xp-text');
+    const streakCount = document.getElementById('streak-count');
+    
+    const currentLevel = AppState.stats.level;
+    const nextLevel = currentLevel + 1;
+    const currentThreshold = XP_LEVELS[currentLevel]?.threshold || 0;
+    const nextThreshold = XP_LEVELS[nextLevel]?.threshold || XP_LEVELS[currentLevel].threshold + 500;
+    
+    // 计算当前等级的进度
+    const levelProgress = Math.min(100, ((AppState.stats.currentXP - currentThreshold) / (nextThreshold - currentThreshold)) * 100);
+    
+    if (levelBadge) levelBadge.textContent = `Lv.${currentLevel}`;
+    if (levelName) levelName.textContent = XP_LEVELS[currentLevel]?.title || '未知';
+    if (xpFill) xpFill.style.width = `${levelProgress}%`;
+    if (xpText) xpText.textContent = `${Math.floor(AppState.stats.currentXP)} / ${nextThreshold} XP`;
+    if (streakCount) streakCount.textContent = AppState.stats.streakDays;
+}
+
+// 更新每日任务显示
+function updateQuestDisplay() {
+    const questList = document.getElementById('quest-list');
+    if (!questList) return;
+    
+    questList.innerHTML = '';
+    
+    AppState.stats.dailyQuests.forEach(quest => {
+        const questItem = document.createElement('div');
+        questItem.className = 'quest-item';
+        if (quest.completed) {
+            questItem.classList.add('completed');
+        }
+        
+        const progressPercent = (quest.progress / quest.target) * 100;
+        
+        questItem.innerHTML = `
+            <div class="quest-icon">${quest.icon}</div>
+            <div class="quest-info">
+                <div class="quest-title">${quest.title}</div>
+                <div class="quest-desc">${quest.desc}</div>
+            </div>
+            <div class="quest-progress">
+                <div class="quest-bar">
+                    <div class="quest-fill" style="width: ${progressPercent}%"></div>
+                </div>
+                <div class="quest-count">${quest.progress}/${quest.target}</div>
+            </div>
+            <div class="quest-reward">
+                <div class="reward-icon">⚡</div>
+                <div class="reward-xp">+${quest.rewardXP}</div>
+            </div>
+        `;
+        
+        questList.appendChild(questItem);
+    });
+}
+
+// 更新成就显示
+function updateAchievementDisplay() {
+    const achievementsGrid = document.getElementById('achievements-grid');
+    if (!achievementsGrid) return;
+    
+    achievementsGrid.innerHTML = '';
+    
+    ACHIEVEMENTS_CONFIG.forEach(achievement => {
+        const isUnlocked = AppState.stats.achievements.includes(achievement.id);
+        
+        const achievementCard = document.createElement('div');
+        achievementCard.className = 'achievement-card';
+        if (isUnlocked) {
+            achievementCard.classList.add('unlocked');
+        }
+        
+        achievementCard.innerHTML = `
+            <div class="achievement-icon">${achievement.icon}</div>
+            <span class="achievement-name">${achievement.name}</span>
+            <span class="achievement-desc">${achievement.desc}</span>
+        `;
+        
+        achievementsGrid.appendChild(achievementCard);
+    });
+}
+
+// 每日任务计时器
+function startQuestTimer() {
+    setInterval(() => {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        
+        const remaining = tomorrow - now;
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+        
+        const timerEl = document.getElementById('quest-timer');
+        if (timerEl) {
+            timerEl.textContent = `重置：${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }, 1000);
+}
+
+// 成就和排行榜辅助函数
+function showAchievements() {
+    navigateTo('profile');
+    showNotification('成就系统即将在完整版本中开放！', 'info');
+}
+
+function showLeaderboard() {
+    showNotification('排行榜功能即将在联机版本中开放！', 'info');
+}
+
+function showDailyBonus() {
+    const today = new Date().toDateString();
+    const lastBonus = AppState.stats.lastBonusDate;
+    
+    if (lastBonus === today) {
+        showNotification('你今天已经领取过每日奖励了！明天再来吧~', 'info');
+        return;
+    }
+    
+    // 模拟每日奖励
+    const bonusXP = 30;
+    addXP(bonusXP, '每日签到奖励');
+    
+    AppState.stats.lastBonusDate = today;
+    saveUserData();
+    
+    showNotification(`🎁 每日奖励！\n你获得了 ${bonusXP} XP！`, 'success');
+}
+
+// 通知系统
 function showNotification(message, type = 'info') {
-    // 简单的 alert 替代
-    alert(message);
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: ${type === 'success' ? '#10B981' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+        max-width: 320px;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }
 
 // ========================================
@@ -545,3 +978,32 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// ========================================
+// 对话完成时更新任务进度
+// ========================================
+function updateSessionStats() {
+    if (AppState.sessionStartTime) {
+        const elapsed = Math.floor((Date.now() - AppState.sessionStartTime) / 60000);
+        if (elapsed > 0) {
+            AppState.stats.totalMinutes += elapsed;
+            AppState.stats.totalSessions += 1;
+            
+            // 更新打卡
+            const today = new Date().toDateString();
+            if (AppState.stats.lastPracticeDate !== today) {
+                AppState.stats.streakDays += 1;
+                AppState.stats.lastPracticeDate = today;
+            }
+            
+            // 更新每日任务进度
+            updateQuestProgress('time', elapsed);
+            updateQuestProgress('scene', 1);
+            updateQuestProgress('speaks', AppState.conversation.filter(m => m.sender === 'user').length);
+            
+            saveUserData();
+            updateStatsDisplay();
+            checkAchievements();
+        }
+    }
+}

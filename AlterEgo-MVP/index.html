@@ -42,12 +42,154 @@
 
         <!-- 首页 -->
         <section id="home" class="page active">
+            <!-- 用户状态栏 -->
+            <div class="user-status-bar">
+                <div class="user-level">
+                    <span class="level-badge">Lv.<span id="user-level-num">1</span></span>
+                    <span class="level-name" id="user-level-name">新手探险家</span>
+                </div>
+                <div class="user-xp-bar">
+                    <div class="xp-fill" id="home-xp-fill" style="width: 0%"></div>
+                    <span class="xp-text"><span id="current-xp">0</span> / <span id="next-level-xp">100</span> XP</span>
+                </div>
+                <div class="user-streak">
+                    <span class="streak-icon">🔥</span>
+                    <span class="streak-count" id="home-streak">0</span>
+                </div>
+            </div>
+
             <div class="hero-section">
-                <h1 class="hero-title">重塑你的英语第二自我</h1>
+                <div class="hero-glow"></div>
+                <h1 class="hero-title">重塑你的<br><span class="gradient-text">英语第二自我</span></h1>
                 <p class="hero-subtitle">在安全的虚拟世界中，自信地开口说英语</p>
-                <button class="btn-primary btn-large" onclick="navigateTo('scenes')">
-                    开始练习
-                    <span class="btn-icon">→</span>
+                
+                <div class="quick-start-card">
+                    <button class="btn-primary btn-large" onclick="navigateTo('scenes')">
+                        <span class="btn-icon">⚡</span>
+                        开始练习
+                        <span class="btn-icon">→</span>
+                    </button>
+                    <p class="continue-practice" id="continue-practice" style="display: none;">
+                        继续上次练习：<span id="last-scene-name">咖啡厅</span>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 每日任务 -->
+            <div class="daily-quests-section">
+                <div class="section-header">
+                    <h3>📅 每日任务</h3>
+                    <span class="quest-timer" id="quest-timer">重置：23:45:32</span>
+                </div>
+                <div class="daily-quests">
+                    <div class="quest-item">
+                        <div class="quest-icon">🎤</div>
+                        <div class="quest-info">
+                            <span class="quest-title">开口练习</span>
+                            <span class="quest-desc">完成 15 分钟口语练习</span>
+                        </div>
+                        <div class="quest-progress">
+                            <div class="quest-bar">
+                                <div class="quest-fill" style="width: 60%"></div>
+                            </div>
+                            <span class="quest-count">9/15 min</span>
+                        </div>
+                        <div class="quest-reward">
+                            <span class="reward-icon">⭐</span>
+                            <span class="reward-xp">+50 XP</span>
+                        </div>
+                    </div>
+                    <div class="quest-item">
+                        <div class="quest-icon">🏪</div>
+                        <div class="quest-info">
+                            <span class="quest-title">场景挑战</span>
+                            <span class="quest-desc">完成咖啡厅场景</span>
+                        </div>
+                        <div class="quest-progress">
+                            <div class="quest-bar">
+                                <div class="quest-fill" style="width: 45%"></div>
+                            </div>
+                            <span class="quest-count">45%</span>
+                        </div>
+                        <div class="quest-reward">
+                            <span class="reward-icon">⭐</span>
+                            <span class="reward-xp">+100 XP</span>
+                        </div>
+                    </div>
+                    <div class="quest-item">
+                        <div class="quest-icon">🗣️</div>
+                        <div class="quest-info">
+                            <span class="quest-title">流利表达</span>
+                            <span class="quest-desc">连续对话 5 轮不卡顿</span>
+                        </div>
+                        <div class="quest-progress">
+                            <div class="quest-bar">
+                                <div class="quest-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="quest-count">0/5</span>
+                        </div>
+                        <div class="quest-reward">
+                            <span class="reward-icon">⭐</span>
+                            <span class="reward-xp">+30 XP</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="daily-quest-reward" id="daily-quest-reward" style="display: none;">
+                    <div class="reward-box">
+                        <span class="reward-icon">🎁</span>
+                        <span>每日任务完成！</span>
+                        <span class="reward-xp">+200 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成就徽章 -->
+            <div class="achievements-section">
+                <div class="section-header">
+                    <h3>🏆 你的成就</h3>
+                    <a href="#achievements" class="view-all" onclick="showAchievements()">查看全部</a>
+                </div>
+                <div class="achievements-grid">
+                    <div class="achievement-card unlocked">
+                        <div class="achievement-icon">🎯</div>
+                        <span class="achievement-name">初出茅庐</span>
+                        <span class="achievement-desc">完成第一次练习</span>
+                    </div>
+                    <div class="achievement-card locked">
+                        <div class="achievement-icon">🔥</div>
+                        <span class="achievement-name">连续三天</span>
+                        <span class="achievement-desc">连续练习 3 天</span>
+                    </div>
+                    <div class="achievement-card locked">
+                        <div class="achievement-icon">💬</div>
+                        <span class="achievement-name">口若悬河</span>
+                        <span class="achievement-desc">累计练习 100 分钟</span>
+                    </div>
+                    <div class="achievement-card locked">
+                        <div class="achievement-icon">🌟</div>
+                        <span class="achievement-name">场景达人</span>
+                        <span class="achievement-desc">解锁所有场景</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速入口 -->
+            <div class="quick-actions">
+                <button class="action-btn" onclick="navigateTo('scenes')">
+                    <span class="action-icon">🎮</span>
+                    <span>场景练习</span>
+                </button>
+                <button class="action-btn" onclick="showLeaderboard()">
+                    <span class="action-icon">🏅</span>
+                    <span>排行榜</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('profile')">
+                    <span class="action-icon">👤</span>
+                    <span>我的进度</span>
+                </button>
+                <button class="action-btn" onclick="showDailyBonus()">
+                    <span class="action-icon">🎁</span>
+                    <span>每日奖励</span>
                 </button>
             </div>
             
