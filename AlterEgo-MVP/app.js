@@ -350,11 +350,65 @@ function saveAvatar() {
 // ========================================
 // 场景管理
 // ========================================
+
+// 已解锁场景列表
+function getUnlockedScenes() {
+    const unlocked = localStorage.getItem('alterEgoUnlockedScenes');
+    if (unlocked) {
+        return JSON.parse(unlocked);
+    }
+    // 新用户默认解锁新手教程和咖啡厅
+    return ['tutorial', 'cafe'];
+}
+
+function unlockScene(sceneId) {
+    const unlocked = getUnlockedScenes();
+    if (!unlocked.includes(sceneId)) {
+        unlocked.push(sceneId);
+        localStorage.setItem('alterEgoUnlockedScenes', JSON.stringify(unlocked));
+        updateSceneLockStatus();
+    }
+}
+
+function updateSceneLockStatus() {
+    const unlocked = getUnlockedScenes();
+    document.querySelectorAll('.scene-card').forEach(card => {
+        const sceneId = card.dataset.scene;
+        const statusEl = card.querySelector('.scene-status');
+        const lockIcon = card.querySelector('.lock-icon');
+        
+        if (unlocked.includes(sceneId)) {
+            card.classList.remove('locked');
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="check-icon">✓</span><span>已解锁</span>';
+            }
+        } else {
+            card.classList.add('locked');
+            // 更新锁定提示
+            const nextScene = getNextSceneName(sceneId);
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="lock-icon">🔒</span><span>${nextScene}</span>`;
+            }
+        }
+    });
+}
+
+function getNextSceneName(currentScene) {
+    const sceneNames = {
+        'tutorial': '完成新手教程',
+        'cafe': '完成咖啡厅解锁',
+        'airport': '完成机场解锁',
+        'meeting': '完成会议室解锁'
+    };
+    return sceneNames[currentScene] || '锁定';
+}
+
 function selectScene(sceneId) {
-    const sceneCard = document.querySelector(`.scene-card[data-scene="${sceneId}"]`);
-    if (sceneCard && sceneCard.classList.contains('locked')) {
-        // 场景已锁定
-        showNotification('请先完成前置场景解锁此场景', 'warning');
+    const unlocked = getUnlockedScenes();
+    if (!unlocked.includes(sceneId)) {
+        // 场景已锁定，显示解锁提示
+        const nextScene = getNextSceneName(sceneId);
+        showNotification(nextScene, 'warning');
         return;
     }
     
@@ -362,6 +416,7 @@ function selectScene(sceneId) {
     
     // 更新场景标题
     const sceneTitles = {
+        'tutorial': '🎓 新手教程',
         'cafe': '☕ 咖啡厅',
         'airport': '✈️ 机场',
         'meeting': '💼 会议室'
@@ -386,6 +441,7 @@ function initializeConversation(sceneId) {
     
     // 场景引导语
     const sceneGreetings = {
+        'tutorial': "Hello! I'm your AI partner. Let's practice some basic English together. Try saying 'Hello' or 'Hi' to start!",
         'cafe': "Hi there! Welcome to our cafe. What would you like to order today?",
         'airport': "Good morning! Can I see your passport and ticket, please?",
         'meeting': "Hello everyone, thanks for joining. Let's start the meeting."
@@ -811,6 +867,13 @@ function updateUserStatus() {
     const xpText = document.getElementById('xp-text');
     const streakCount = document.getElementById('streak-count');
     
+    // 更新首页状态栏
+    const homeLevelNum = document.getElementById('user-level-num');
+    const homeXPFill = document.getElementById('home-xp-fill');
+    const currentXP = document.getElementById('current-xp');
+    const nextLevelXP = document.getElementById('next-level-xp');
+    const homeStreak = document.getElementById('home-streak');
+    
     const currentLevel = AppState.stats.level;
     const nextLevel = currentLevel + 1;
     const currentThreshold = XP_LEVELS[currentLevel]?.threshold || 0;
@@ -819,11 +882,20 @@ function updateUserStatus() {
     // 计算当前等级的进度
     const levelProgress = Math.min(100, ((AppState.stats.currentXP - currentThreshold) / (nextThreshold - currentThreshold)) * 100);
     
+    // 更新所有相关元素
     if (levelBadge) levelBadge.textContent = `Lv.${currentLevel}`;
     if (levelName) levelName.textContent = XP_LEVELS[currentLevel]?.title || '未知';
     if (xpFill) xpFill.style.width = `${levelProgress}%`;
     if (xpText) xpText.textContent = `${Math.floor(AppState.stats.currentXP)} / ${nextThreshold} XP`;
     if (streakCount) streakCount.textContent = AppState.stats.streakDays;
+    
+    // 更新首页状态栏
+    if (homeLevelNum) homeLevelNum.textContent = currentLevel;
+    if (homeLevelName) homeLevelName.textContent = XP_LEVELS[currentLevel]?.title || '新手';
+    if (homeXPFill) homeXPFill.style.width = `${levelProgress}%`;
+    if (currentXP) currentXP.textContent = Math.floor(AppState.stats.currentXP);
+    if (nextLevelXP) nextLevelXP.textContent = nextThreshold;
+    if (homeStreak) homeStreak.textContent = AppState.stats.streakDays;
 }
 
 // 更新每日任务显示
@@ -1000,6 +1072,9 @@ function updateSessionStats() {
             updateQuestProgress('time', elapsed);
             updateQuestProgress('scene', 1);
             updateQuestProgress('speaks', AppState.conversation.filter(m => m.sender === 'user').length);
+            if (AppState.hintLevel === 0) {
+                updateQuestProgress('noHint', 1);
+            }
             
             saveUserData();
             updateStatsDisplay();
@@ -1007,3 +1082,4 @@ function updateSessionStats() {
         }
     }
 }
+
